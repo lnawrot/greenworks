@@ -134,6 +134,19 @@ class QueryUserUGCWorker : public QueryUGCWorker {
   EUserUGCListSortOrder ugc_list_sort_order_;
 };
 
+class QueryDetailsUGCWorker : public QueryUGCWorker {
+ public:
+  QueryDetailsUGCWorker(Nan::Callback* success_callback,
+                    Nan::Callback* error_callback,
+                    PublishedFileId_t handle);
+
+  // Override Nan::AsyncWorker methods.
+  virtual void Execute();
+
+ private:
+  PublishedFileId_t handle_id_;
+};
+
 class DownloadItemWorker : public SteamCallbackAsyncWorker {
  public:
   DownloadItemWorker(Nan::Callback* success_callback,

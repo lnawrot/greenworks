@@ -321,6 +321,26 @@ void QueryUserUGCWorker::Execute() {
   WaitForCompleted();
 }
 
+QueryDetailsUGCWorker::QueryDetailsUGCWorker(Nan::Callback* success_callback,
+    Nan::Callback* error_callback, PublishedFileId_t handle)
+        :QueryUGCWorker(success_callback, error_callback, static_cast<EUGCMatchingUGCType>(
+      0)),
+         handle_id_(handle) {
+}
+
+void QueryDetailsUGCWorker::Execute() {
+  UGCQueryHandle_t ugc_handle = SteamUGC()->CreateQueryUGCDetailsRequest(
+    &handle_id_,
+    1);
+  SteamAPICall_t ugc_query_result = SteamUGC()->SendQueryUGCRequest(ugc_handle);
+  ugc_query_call_result_.Set(ugc_query_result, this,
+      &QueryDetailsUGCWorker::OnUGCQueryCompleted);
+
+  // Wait for query all ugc completed.
+  WaitForCompleted();
+}
+
+
 DownloadItemWorker::DownloadItemWorker(Nan::Callback* success_callback,
     Nan::Callback* error_callback, UGCHandle_t download_file_handle,
     const std::string& download_dir)
