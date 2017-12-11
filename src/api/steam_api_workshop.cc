@@ -308,6 +308,25 @@ NAN_METHOD(UGCUnsubscribe) {
 }
 
 
+NAN_METHOD(UGCSubscribe) {
+  Nan::HandleScope scope;
+  if (info.Length() < 2 || !info[0]->IsString() || !info[1]->IsFunction()) {
+    THROW_BAD_ARGS("Bad arguments");
+  }
+  PublishedFileId_t subscribed_file_id = utils::strToUint64(
+      *(v8::String::Utf8Value(info[0])));
+  Nan::Callback* success_callback =
+      new Nan::Callback(info[1].As<v8::Function>());
+  Nan::Callback* error_callback = NULL;
+
+  if (info.Length() > 2 && info[2]->IsFunction())
+    error_callback = new Nan::Callback(info[2].As<v8::Function>());
+
+  Nan::AsyncQueueWorker(new greenworks::SubscribePublishedFileWorker(
+      success_callback, error_callback, subscribed_file_id));
+  info.GetReturnValue().Set(Nan::Undefined());
+}
+
 
 NAN_METHOD(UGCGetDetails) {
   Nan::HandleScope scope;
@@ -366,6 +385,9 @@ void RegisterAPIs(v8::Handle<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("ugcUnsubscribe").ToLocalChecked(),
            Nan::New<v8::FunctionTemplate>(UGCUnsubscribe)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("ugcSubscribe").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(UGCSubscribe)->GetFunction());
   Nan::Set(exports,
            Nan::New("ugcGetDetails").ToLocalChecked(),
            Nan::New<v8::FunctionTemplate>(UGCGetDetails)->GetFunction());

@@ -516,7 +516,7 @@ UnsubscribePublishedFileWorker::UnsubscribePublishedFileWorker(
 
 void UnsubscribePublishedFileWorker::Execute() {
   SteamAPICall_t unsubscribed_result =
-      SteamRemoteStorage()->UnsubscribePublishedFile(unsubscribe_file_id_);
+      SteamUGC()->UnsubscribeItem(unsubscribe_file_id_);
   unsubscribe_call_result_.Set(unsubscribed_result, this,
       &UnsubscribePublishedFileWorker::OnUnsubscribeCompleted);
 
@@ -526,6 +526,28 @@ void UnsubscribePublishedFileWorker::Execute() {
 
 void UnsubscribePublishedFileWorker::OnUnsubscribeCompleted(
     RemoteStoragePublishedFileUnsubscribed_t* result, bool io_failure) {
+  is_completed_ = true;
+}
+
+SubscribePublishedFileWorker::SubscribePublishedFileWorker(
+    Nan::Callback* success_callback, Nan::Callback* error_callback,
+    PublishedFileId_t subscribe_file_id)
+        :SteamCallbackAsyncWorker(success_callback, error_callback),
+         subscribe_file_id_(subscribe_file_id) {
+}
+
+void SubscribePublishedFileWorker::Execute() {
+  SteamAPICall_t subscribed_result =
+      SteamUGC()->SubscribeItem(subscribe_file_id_);
+  subscribe_call_result_.Set(subscribed_result, this,
+      &SubscribePublishedFileWorker::OnSubscribeCompleted);
+
+  // Wait for unsubscribing job completed.
+  WaitForCompleted();
+}
+
+void SubscribePublishedFileWorker::OnSubscribeCompleted(
+    RemoteStorageSubscribePublishedFileResult_t* result, bool io_failure) {
   is_completed_ = true;
 }
 
