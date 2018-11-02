@@ -136,7 +136,9 @@ class QueryDetailsUGCWorker : public QueryUGCWorker {
  public:
   QueryDetailsUGCWorker(Nan::Callback* success_callback,
                     Nan::Callback* error_callback,
-                    PublishedFileId_t handle);
+                    PublishedFileId_t handle,
+                    uint32 app_id,
+                    uint32 page_num);
 
   // Override Nan::AsyncWorker methods.
   virtual void Execute();

@@ -397,6 +397,7 @@ NAN_METHOD(UGCSubscribe) {
 
 NAN_METHOD(UGCGetDetails) {
   Nan::HandleScope scope;
+
   if (info.Length() < 2 || !info[0]->IsString() || !info[1]->IsFunction()) {
     THROW_BAD_ARGS("Bad arguments");
   }
@@ -406,12 +407,17 @@ NAN_METHOD(UGCGetDetails) {
   Nan::Callback* success_callback =
       new Nan::Callback(info[1].As<v8::Function>());
   Nan::Callback* error_callback = NULL;
+  uint32 appId = SteamUtils()->GetAppID();
 
   if (info.Length() > 2 && info[2]->IsFunction())
     error_callback = new Nan::Callback(info[2].As<v8::Function>());
 
+  uint32 page_num = 1;
+  if (info.Length() > 3 && info[3]->IsInt32())
+    page_num = info[3]->Int32Value();
+
   Nan::AsyncQueueWorker(new greenworks::QueryDetailsUGCWorker(
-      success_callback, error_callback, handle));
+      success_callback, error_callback, handle, appId, page_num));
   info.GetReturnValue().Set(Nan::Undefined());
 }
 

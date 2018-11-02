@@ -331,9 +331,9 @@ void QueryUserUGCWorker::Execute() {
 }
 
 QueryDetailsUGCWorker::QueryDetailsUGCWorker(Nan::Callback* success_callback,
-    Nan::Callback* error_callback, PublishedFileId_t handle)
+    Nan::Callback* error_callback, PublishedFileId_t handle, uint32 app_id, uint32 page_num)
         :QueryUGCWorker(success_callback, error_callback, static_cast<EUGCMatchingUGCType>(
-      0)),
+      0), app_id, page_num),
          handle_id_(handle) {
 }
 
