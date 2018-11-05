@@ -159,10 +159,15 @@ NAN_METHOD(GetCurrentUILanguage) {
       Nan::New(SteamUtils()->GetSteamUILanguage()).ToLocalChecked());
 }
 
-// TODO(hokein): Implement get game install directory.
 NAN_METHOD(GetCurrentGameInstallDir) {
   Nan::HandleScope scope;
-  info.GetReturnValue().Set(Nan::New("NOT IMPLEMENTED").ToLocalChecked());
+  char* folder;
+  SteamApps()->GetAppInstallDir(SteamUtils()->GetAppID(), folder, 260);
+  if (folder) {
+    info.GetReturnValue().Set(Nan::New(folder).ToLocalChecked());
+    return;
+  }
+  info.GetReturnValue().Set(Nan::EmptyString());
 }
 
 NAN_METHOD(GetNumberOfPlayers) {
