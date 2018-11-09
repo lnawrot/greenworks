@@ -270,6 +270,32 @@ NAN_METHOD(GetImageRGBA) {
           .ToLocalChecked());
 }
 
+NAN_METHOD(GetItemInstallInfo) {
+  Nan::HandleScope scope;
+  if (info.Length() < 1) {
+    THROW_BAD_ARGS("Bad arguments");
+  }
+  uint64* size;
+  char* folder;
+  uint32* timestamp;
+  bool result = SteamUGC()->GetItemInstallInfo(
+    utils::strToUint64(*(v8::String::Utf8Value(info[0]))),
+    size,
+    folder,
+    260,
+    timestamp);
+
+  if (!result) {
+    THROW_BAD_ARGS("No content or not installed");
+  }
+
+  if (folder) {
+    info.GetReturnValue().Set(Nan::New(folder).ToLocalChecked());
+    return;
+  }
+  info.GetReturnValue().Set(Nan::EmptyString());
+}
+
 void RegisterAPIs(v8::Handle<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("_version").ToLocalChecked(),
@@ -319,6 +345,9 @@ void RegisterAPIs(v8::Handle<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("getImageRGBA").ToLocalChecked(),
            Nan::New<v8::FunctionTemplate>(GetImageRGBA)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("getItemInstallInfo").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(GetItemInstallInfo)->GetFunction());
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
