@@ -497,7 +497,9 @@ void SynchronizeItemsWorker::OnDownloadCompleted(
       return;
     }
   } else {
-    SetErrorMessage("Error on downloading file.");
+    char* str;
+    sprintf(str, "Error on downloading file. (%d)", result->m_eResult);
+    SetErrorMessage(str);
   }
   is_completed_ = true;
 }
