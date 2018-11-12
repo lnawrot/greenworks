@@ -387,7 +387,7 @@ void DownloadItemWorker::OnDownloadCompleted(
     }
     delete[] content;
   } else {
-    char* str = "";
+    char str[40];
     sprintf(str, "Error on querying ugc. (%d)", result->m_eResult);
     SetErrorMessage(str);
   }
@@ -451,7 +451,7 @@ void SynchronizeItemsWorker::OnUGCQueryCompleted(
       return;
     }
   } else {
-    char* str = "";
+    char str[40];
     sprintf(str, "Error on querying ugc. (%d)", result->m_eResult);
     SetErrorMessage(str);
   }
@@ -499,7 +499,7 @@ void SynchronizeItemsWorker::OnDownloadCompleted(
       return;
     }
   } else {
-    char* str = "";
+    char str[40];
     sprintf(str, "Error on downloading file. (%d)", result->m_eResult);
     SetErrorMessage(str);
   }
