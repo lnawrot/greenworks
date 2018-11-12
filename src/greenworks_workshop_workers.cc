@@ -387,7 +387,9 @@ void DownloadItemWorker::OnDownloadCompleted(
     }
     delete[] content;
   } else {
-    SetErrorMessage("Error on downloading file.");
+    char* str;
+    sprintf(str, "Error on querying ugc. (%d)", result->m_eResult);
+    SetErrorMessage(str);
   }
   is_completed_ = true;
 }
