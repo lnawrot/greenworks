@@ -18,6 +18,31 @@ NAN_METHOD(GetDLCCount) {
   info.GetReturnValue().Set(SteamApps()->GetDLCCount());
 }
 
+NAN_METHOD(GetDLCDataByIndex) {
+  Nan::HandleScope scope;
+  
+  if (info.Length() < 1 || !info[0]->IsInt32()) {
+    THROW_BAD_ARGS("Bad arguments; expected: index [int32]");
+  }
+  
+  int32 index = info[0]->Int32Value();
+  AppId_t app_id;
+  bool available;
+  char name[128];
+  bool success = SteamApps()->BGetDLCDataByIndex(index, &app_id, &available, name, 128);
+
+  if (success) {
+    v8::Local<v8::Object> result = Nan::New<v8::Object>();
+    Nan::Set(result, Nan::New("appId").ToLocalChecked(), Nan::New(static_cast<uint32>(app_id)));
+    Nan::Set(result, Nan::New("available").ToLocalChecked(), Nan::New(available));
+    Nan::Set(result, Nan::New("name").ToLocalChecked(), Nan::New(name).ToLocalChecked());
+    info.GetReturnValue().Set(result);
+  }
+  else {
+    info.GetReturnValue().Set(Nan::Undefined());
+  }
+}
+
 NAN_METHOD(IsDLCInstalled) {
   Nan::HandleScope scope;
   if (info.Length() < 1 || !info[0]->IsUint32()) {
@@ -27,7 +52,7 @@ NAN_METHOD(IsDLCInstalled) {
   info.GetReturnValue().Set(SteamApps()->BIsDlcInstalled(dlc_app_id));
 }
 
-NAN_METHOD(installDLC) {
+NAN_METHOD(InstallDLC) {
   Nan::HandleScope scope;
   if (info.Length() < 1 || !info[0]->IsUint32()) {
     THROW_BAD_ARGS("Bad arguments");
@@ -37,7 +62,7 @@ NAN_METHOD(installDLC) {
   info.GetReturnValue().Set(Nan::Undefined());
 }
 
-NAN_METHOD(uninstallDLC) {
+NAN_METHOD(UninstallDLC) {
   Nan::HandleScope scope;
   if (info.Length() < 1 || !info[0]->IsUint32()) {
     THROW_BAD_ARGS("Bad arguments");
@@ -47,15 +72,12 @@ NAN_METHOD(uninstallDLC) {
   info.GetReturnValue().Set(Nan::Undefined());
 }
 
-void RegisterAPIs(v8::Handle<v8::Object> target) {
-  Nan::Set(target, Nan::New("getDLCCount").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetDLCCount)->GetFunction());
-  Nan::Set(target, Nan::New("isDLCInstalled").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(IsDLCInstalled)->GetFunction());
-  Nan::Set(target, Nan::New("installDLC").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(installDLC)->GetFunction());
-  Nan::Set(target, Nan::New("uninstallDLC").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(uninstallDLC)->GetFunction());
+void RegisterAPIs(v8::Local<v8::Object> target) {
+  SET_FUNCTION("getDLCCount", GetDLCCount);
+  SET_FUNCTION("getDLCDataByIndex", GetDLCDataByIndex);
+  SET_FUNCTION("isDLCInstalled", IsDLCInstalled);
+  SET_FUNCTION("installDLC", InstallDLC);
+  SET_FUNCTION("uninstallDLC", UninstallDLC);
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);

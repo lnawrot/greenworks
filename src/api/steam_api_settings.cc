@@ -50,9 +50,9 @@ v8::Local<v8::Object> GetSteamUserCountType(int type_id) {
   };
   std::string name = account_types[type];
   v8::Local<v8::Object> account_type = Nan::New<v8::Object>();
-  account_type->Set(Nan::New("name").ToLocalChecked(),
-                    Nan::New(name).ToLocalChecked());
-  account_type->Set(Nan::New("value").ToLocalChecked(), Nan::New(type_id));
+  Nan::Set(account_type, Nan::New("name").ToLocalChecked(),
+           Nan::New(name).ToLocalChecked());
+  Nan::Set(account_type, Nan::New("value").ToLocalChecked(), Nan::New(type_id));
   return account_type;
 }
 
@@ -86,57 +86,58 @@ NAN_METHOD(GetSteamId) {
   Nan::HandleScope scope;
   CSteamID user_id = SteamUser()->GetSteamID();
   v8::Local<v8::Object> flags = Nan::New<v8::Object>();
-  flags->Set(Nan::New("anonymous").ToLocalChecked(),
-             Nan::New(user_id.BAnonAccount()));
-  flags->Set(Nan::New("anonymousGameServer").ToLocalChecked(),
-             Nan::New(user_id.BAnonGameServerAccount()));
-  flags->Set(Nan::New("anonymousGameServerLogin").ToLocalChecked(),
-             Nan::New(user_id.BBlankAnonAccount()));
-  flags->Set(Nan::New("anonymousUser").ToLocalChecked(),
-             Nan::New(user_id.BAnonUserAccount()));
-  flags->Set(Nan::New("chat").ToLocalChecked(),
-             Nan::New(user_id.BChatAccount()));
-  flags->Set(Nan::New("clan").ToLocalChecked(),
-             Nan::New(user_id.BClanAccount()));
-  flags->Set(Nan::New("consoleUser").ToLocalChecked(),
-             Nan::New(user_id.BConsoleUserAccount()));
-  flags->Set(Nan::New("contentServer").ToLocalChecked(),
-             Nan::New(user_id.BContentServerAccount()));
-  flags->Set(Nan::New("gameServer").ToLocalChecked(),
-             Nan::New(user_id.BGameServerAccount()));
-  flags->Set(Nan::New("individual").ToLocalChecked(),
-             Nan::New(user_id.BIndividualAccount()));
-  flags->Set(Nan::New("gameServerPersistent").ToLocalChecked(),
-             Nan::New(user_id.BPersistentGameServerAccount()));
-  flags->Set(Nan::New("lobby").ToLocalChecked(), Nan::New(user_id.IsLobby()));
+  Nan::Set(flags, Nan::New("anonymous").ToLocalChecked(),
+           Nan::New(user_id.BAnonAccount()));
+  Nan::Set(flags, Nan::New("anonymousGameServer").ToLocalChecked(),
+           Nan::New(user_id.BAnonGameServerAccount()));
+  Nan::Set(flags, Nan::New("anonymousGameServerLogin").ToLocalChecked(),
+           Nan::New(user_id.BBlankAnonAccount()));
+  Nan::Set(flags, Nan::New("anonymousUser").ToLocalChecked(),
+           Nan::New(user_id.BAnonUserAccount()));
+  Nan::Set(flags, Nan::New("chat").ToLocalChecked(),
+           Nan::New(user_id.BChatAccount()));
+  Nan::Set(flags, Nan::New("clan").ToLocalChecked(),
+           Nan::New(user_id.BClanAccount()));
+  Nan::Set(flags, Nan::New("consoleUser").ToLocalChecked(),
+           Nan::New(user_id.BConsoleUserAccount()));
+  Nan::Set(flags, Nan::New("contentServer").ToLocalChecked(),
+           Nan::New(user_id.BContentServerAccount()));
+  Nan::Set(flags, Nan::New("gameServer").ToLocalChecked(),
+           Nan::New(user_id.BGameServerAccount()));
+  Nan::Set(flags, Nan::New("individual").ToLocalChecked(),
+           Nan::New(user_id.BIndividualAccount()));
+  Nan::Set(flags, Nan::New("gameServerPersistent").ToLocalChecked(),
+           Nan::New(user_id.BPersistentGameServerAccount()));
+  Nan::Set(flags, Nan::New("lobby").ToLocalChecked(),
+           Nan::New(user_id.IsLobby()));
 
   v8::Local<v8::Object> result = greenworks::SteamID::Create(user_id);
   // For backwards compatiblilty.
-  result->Set(Nan::New("flags").ToLocalChecked(), flags);
-  result->Set(Nan::New("type").ToLocalChecked(),
-              GetSteamUserCountType(user_id.GetEAccountType()));
-  result->Set(Nan::New("accountId").ToLocalChecked(),
-              Nan::New<v8::Integer>(user_id.GetAccountID()));
-  result->Set(Nan::New("steamId").ToLocalChecked(),
-      Nan::New(utils::uint64ToString(
-          user_id.ConvertToUint64())).ToLocalChecked());
-  result->Set(Nan::New("staticAccountId").ToLocalChecked(),
-      Nan::New(utils::uint64ToString(
-          user_id.GetStaticAccountKey())).ToLocalChecked());
-  result->Set(Nan::New("isValid").ToLocalChecked(),
-              Nan::New<v8::Integer>(user_id.IsValid()));
-  result->Set(Nan::New("level").ToLocalChecked(),
-              Nan::New<v8::Integer>(SteamUser()->GetPlayerSteamLevel()));
+  Nan::Set(result, Nan::New("flags").ToLocalChecked(), flags);
+  Nan::Set(result, Nan::New("type").ToLocalChecked(),
+           GetSteamUserCountType(user_id.GetEAccountType()));
+  Nan::Set(result, Nan::New("accountId").ToLocalChecked(),
+           Nan::New<v8::Integer>(user_id.GetAccountID()));
+  Nan::Set(result, Nan::New("steamId").ToLocalChecked(),
+           Nan::New(utils::uint64ToString(user_id.ConvertToUint64()))
+               .ToLocalChecked());
+  Nan::Set(result, Nan::New("staticAccountId").ToLocalChecked(),
+           Nan::New(utils::uint64ToString(user_id.GetStaticAccountKey()))
+               .ToLocalChecked());
+  Nan::Set(result, Nan::New("isValid").ToLocalChecked(),
+           Nan::New<v8::Integer>(user_id.IsValid()));
+  Nan::Set(result, Nan::New("level").ToLocalChecked(),
+           Nan::New<v8::Integer>(SteamUser()->GetPlayerSteamLevel()));
 
   if (!SteamFriends()->RequestUserInformation(user_id, true)) {
-    result->Set(Nan::New("screenName").ToLocalChecked(),
-                Nan::New(SteamFriends()->GetFriendPersonaName(user_id))
-                    .ToLocalChecked());
+    Nan::Set(result, Nan::New("screenName").ToLocalChecked(),
+             Nan::New(SteamFriends()->GetFriendPersonaName(user_id))
+                 .ToLocalChecked());
   } else {
     std::ostringstream sout;
     sout << user_id.GetAccountID();
-    result->Set(Nan::New("screenName").ToLocalChecked(),
-                Nan::New(sout.str()).ToLocalChecked());
+    Nan::Set(result, Nan::New("screenName").ToLocalChecked(),
+             Nan::New(sout.str()).ToLocalChecked());
   }
   info.GetReturnValue().Set(result);
 }
@@ -145,6 +146,12 @@ NAN_METHOD(GetAppId) {
   Nan::HandleScope scope;
   info.GetReturnValue().Set(
       Nan::New(SteamUtils()->GetAppID()));
+}
+
+NAN_METHOD(GetAppBuildId) {
+  Nan::HandleScope scope;
+  info.GetReturnValue().Set(
+      Nan::New(SteamApps()->GetAppBuildId()));
 }
 
 NAN_METHOD(GetCurrentGameLanguage) {
@@ -170,6 +177,23 @@ NAN_METHOD(GetCurrentGameInstallDir) {
   info.GetReturnValue().Set(Nan::EmptyString());
 }
 
+NAN_METHOD(GetAppInstallDir) {
+  Nan::HandleScope scope;
+
+  if (info.Length() < 1 || !info[0]->IsUint32()) {
+    THROW_BAD_ARGS("Bad arguments; expected: appid [uint32]");
+  }
+
+  AppId_t app_id = static_cast<AppId_t>(info[0]->Uint32Value());
+  const int buffer_size =
+      260;  // MAX_PATH on 32bit Windows according to MSDN documentation
+  char buffer[buffer_size];
+  uint32 length = SteamApps()->GetAppInstallDir(app_id, buffer, buffer_size);
+
+  // The length takes \0 termination into account, we don't need it in JS.
+  info.GetReturnValue().Set(Nan::New(buffer, length - 1).ToLocalChecked());
+}
+
 NAN_METHOD(GetNumberOfPlayers) {
   Nan::HandleScope scope;
   if (info.Length() < 1 || !info[0]->IsFunction()) {
@@ -190,6 +214,11 @@ NAN_METHOD(GetNumberOfPlayers) {
 NAN_METHOD(IsGameOverlayEnabled) {
   Nan::HandleScope scope;
   info.GetReturnValue().Set(Nan::New(SteamUtils()->IsOverlayEnabled()));
+}
+
+NAN_METHOD(IsSteamInBigPictureMode) {
+  Nan::HandleScope scope;
+  info.GetReturnValue().Set(Nan::New(SteamUtils()->IsSteamInBigPictureMode()));
 }
 
 NAN_METHOD(ActivateGameOverlay) {
@@ -230,6 +259,16 @@ NAN_METHOD(IsSubscribedApp) {
   info.GetReturnValue().Set(Nan::New(subscribed));
 }
 
+NAN_METHOD(IsAppInstalled) {
+  Nan::HandleScope scope;
+  if (info.Length() < 1 && !info[0]->IsUint32()) {
+    THROW_BAD_ARGS("Bad arguments; expected: appid [uint32]");
+  }
+  AppId_t app_id = static_cast<AppId_t>(info[0]->Uint32Value());
+  bool installed = SteamApps()->BIsAppInstalled(app_id);
+  info.GetReturnValue().Set(Nan::New(installed));
+}
+
 NAN_METHOD(GetImageSize) {
   Nan::HandleScope scope;
   if (info.Length() < 1 && !info[0]->IsInt32()) {
@@ -242,8 +281,8 @@ NAN_METHOD(GetImageSize) {
     THROW_BAD_ARGS("Fail to get image size");
   }
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
-  result->Set(Nan::New("width").ToLocalChecked(), Nan::New(width));
-  result->Set(Nan::New("height").ToLocalChecked(), Nan::New(height));
+  Nan::Set(result, Nan::New("width").ToLocalChecked(), Nan::New(width));
+  Nan::Set(result, Nan::New("height").ToLocalChecked(), Nan::New(height));
   info.GetReturnValue().Set(result);
 }
 
@@ -296,58 +335,30 @@ NAN_METHOD(GetItemInstallInfo) {
   info.GetReturnValue().Set(Nan::EmptyString());
 }
 
-void RegisterAPIs(v8::Handle<v8::Object> exports) {
-  Nan::Set(exports,
+void RegisterAPIs(v8::Local<v8::Object> target) {
+  Nan::Set(target,
            Nan::New("_version").ToLocalChecked(),
            Nan::New(GREENWORKS_VERSION).ToLocalChecked());
-  Nan::Set(
-      exports, Nan::New("restartAppIfNecessary").ToLocalChecked(),
-      Nan::New<v8::FunctionTemplate>(RestartAppIfNecessary)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("isSteamRunning").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(IsSteamRunning)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getSteamId").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetSteamId)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getAppId").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetAppId)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getCurrentGameLanguage").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(
-               GetCurrentGameLanguage)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getCurrentUILanguage").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetCurrentUILanguage)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getCurrentGameInstallDir").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(
-               GetCurrentGameInstallDir)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getNumberOfPlayers").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetNumberOfPlayers)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("isGameOverlayEnabled").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(IsGameOverlayEnabled)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("activateGameOverlay").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(ActivateGameOverlay)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("activateGameOverlayToWebPage").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(
-               ActivateGameOverlayToWebPage)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("isSubscribedApp").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(IsSubscribedApp)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getImageSize").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetImageSize)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getImageRGBA").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetImageRGBA)->GetFunction());
-  Nan::Set(exports,
-           Nan::New("getItemInstallInfo").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(GetItemInstallInfo)->GetFunction());
+
+  SET_FUNCTION("restartAppIfNecessary", RestartAppIfNecessary);
+  SET_FUNCTION("isSteamRunning", IsSteamRunning);
+  SET_FUNCTION("getSteamId", GetSteamId);
+  SET_FUNCTION("getAppId", GetAppId);
+  SET_FUNCTION("getAppBuildId", GetAppBuildId);
+  SET_FUNCTION("getCurrentGameLanguage", GetCurrentGameLanguage);
+  SET_FUNCTION("getCurrentUILanguage", GetCurrentUILanguage);
+  SET_FUNCTION("getCurrentGameInstallDir", GetCurrentGameInstallDir);
+  SET_FUNCTION("getAppInstallDir", GetAppInstallDir);
+  SET_FUNCTION("getNumberOfPlayers", GetNumberOfPlayers);
+  SET_FUNCTION("isGameOverlayEnabled", IsGameOverlayEnabled);
+  SET_FUNCTION("isSteamInBigPictureMode", IsSteamInBigPictureMode);
+  SET_FUNCTION("activateGameOverlay", ActivateGameOverlay);
+  SET_FUNCTION("activateGameOverlayToWebPage", ActivateGameOverlayToWebPage);
+  SET_FUNCTION("isAppInstalled", IsAppInstalled);
+  SET_FUNCTION("isSubscribedApp", IsSubscribedApp);
+  SET_FUNCTION("getImageSize", GetImageSize);
+  SET_FUNCTION("getImageRGBA", GetImageRGBA);
+  SET_FUNCTION("getItemInstallInfo", GetItemInstallInfo);
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);

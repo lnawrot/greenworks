@@ -31,6 +31,10 @@ it returns `true`, your app is being restarted.
 
 Returns an `Integer` represents the app id of the current process.
 
+### greenworks.getAppBuildId()
+
+Returns an `Integer` representing the app's build id. May change at any time based on backend updates to the game.
+
 ### greenworks.getSteamId()
 
 Returns an [`SteamID`](friends.md#steamid) object represents the current Steam
@@ -49,6 +53,12 @@ Returns a `String` represents the current language from Steam set in UI.
 
 Not implement yet.
 
+### greenworks.getAppInstallDir(app_id, buffer, buffer_size)
+
+* `app_id` Integer: The APP ID of your game
+
+Returns a `String` representing the absolute path to the app's installation directory.
+
 ### greenworks.getNumberOfPlayers(success_callback, [error_callback])
 
 * `success_callback` Function(num_of_players)
@@ -66,6 +76,11 @@ Activate the game overlay with the `option` dialog opens.
 
 Return `Boolean` indicates whether Steam overlay is enabled/disabled.
 
+### greenworks.isSteamInBigPictureMode()
+
+Return `Boolean` indicates whether Steam is in Big Picture mode. 
+Will always return `false` if the application is not in Steam's `game` category.
+
 ### greenworks.activateGameOverlayToWebPage(url)
 
 * `url` String: a full url, e.g. http://www.steamgames.com.
@@ -77,6 +92,14 @@ Open a specified url in steam game overlay.
 * `appId` Integer: The APP ID of your game
 
 Returns a `Boolean` indicates whether the user has purchased that app.
+
+### greenworks.isAppInstalled(appId)
+
+* `appId` Integer: The APP ID of your game
+
+Returns a `Boolean` indicating whether the app is currently installed. The app may not actually be owned by the user. 
+
+Only works for base applications, for DLC use `isDLCInstalled` instead.
 
 ### greenworks.getImageSize(handle)
 
