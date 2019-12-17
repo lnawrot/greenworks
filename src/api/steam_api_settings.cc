@@ -69,7 +69,7 @@ NAN_METHOD(RestartAppIfNecessary) {
     return;
   }
 
-  uint32 arg0 = info[0]->Uint32Value();
+  uint32 arg0 = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
   bool restarting = SteamAPI_RestartAppIfNecessary(arg0);
   info.GetReturnValue().Set(Nan::New(restarting));
@@ -184,7 +184,7 @@ NAN_METHOD(GetAppInstallDir) {
     THROW_BAD_ARGS("Bad arguments; expected: appid [uint32]");
   }
 
-  AppId_t app_id = static_cast<AppId_t>(info[0]->Uint32Value());
+  AppId_t app_id = static_cast<AppId_t>(info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
   const int buffer_size =
       260;  // MAX_PATH on 32bit Windows according to MSDN documentation
   char buffer[buffer_size];
@@ -226,7 +226,7 @@ NAN_METHOD(ActivateGameOverlay) {
   if (info.Length() < 1 || !info[0]->IsString()) {
     THROW_BAD_ARGS("Bad arguments");
   }
-  std::string option(*(v8::String::Utf8Value(info[0])));
+  std::string option(*(Nan::Utf8String(info[0])));
   SteamFriends()->ActivateGameOverlay(option.c_str());
   info.GetReturnValue().Set(Nan::Undefined());
 }
@@ -236,7 +236,7 @@ NAN_METHOD(ActivateGameOverlayToWebPage) {
   if (info.Length() < 1 || !info[0]->IsString()) {
     THROW_BAD_ARGS("bad arguments");
   }
-  std::string url = *(v8::String::Utf8Value(info[0]));
+  std::string url = *(Nan::Utf8String(info[0]));
   SteamFriends()->ActivateGameOverlayToWebPage(url.c_str());
   info.GetReturnValue().Set(Nan::Undefined());
 }
@@ -253,7 +253,7 @@ NAN_METHOD(IsSubscribedApp) {
     return;
   }
 
-  uint32 arg0 = info[0]->Uint32Value();
+  uint32 arg0 = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
   bool subscribed = SteamApps()->BIsSubscribedApp(arg0);
   info.GetReturnValue().Set(Nan::New(subscribed));
@@ -264,7 +264,7 @@ NAN_METHOD(IsAppInstalled) {
   if (info.Length() < 1 && !info[0]->IsUint32()) {
     THROW_BAD_ARGS("Bad arguments; expected: appid [uint32]");
   }
-  AppId_t app_id = static_cast<AppId_t>(info[0]->Uint32Value());
+  AppId_t app_id = static_cast<AppId_t>(info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
   bool installed = SteamApps()->BIsAppInstalled(app_id);
   info.GetReturnValue().Set(Nan::New(installed));
 }
@@ -274,7 +274,7 @@ NAN_METHOD(GetImageSize) {
   if (info.Length() < 1 && !info[0]->IsInt32()) {
     THROW_BAD_ARGS("Bad arguments");
   }
-  int image_handle = info[0]->Int32Value();
+  int image_handle = info[0]->Int32Value(Nan::GetCurrentContext()).FromJust();
   uint32 width = 0;
   uint32 height = 0;
   if (!SteamUtils()->GetImageSize(image_handle, &width, &height)) {
@@ -291,7 +291,7 @@ NAN_METHOD(GetImageRGBA) {
   if (info.Length() < 1 && !info[0]->IsInt32()) {
     THROW_BAD_ARGS("Bad arguments");
   }
-  int image_handle = info[0]->Int32Value();
+  int image_handle = info[0]->Int32Value(Nan::GetCurrentContext()).FromJust();
   uint32 width = 0;
   uint32 height = 0;
   if (!SteamUtils()->GetImageSize(image_handle, &width, &height)) {
@@ -318,7 +318,7 @@ NAN_METHOD(GetItemInstallInfo) {
   char* folder;
   uint32* timestamp;
   bool result = SteamUGC()->GetItemInstallInfo(
-    utils::strToUint64(*(v8::String::Utf8Value(info[0]))),
+    utils::strToUint64(*(Nan::Utf8String(info[0]))),
     size,
     folder,
     260,

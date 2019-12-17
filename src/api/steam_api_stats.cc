@@ -66,7 +66,7 @@ NAN_METHOD(GetStatInt) {
     THROW_BAD_ARGS("Bad arguments");
   }
 
-  std::string name = (*(v8::String::Utf8Value(info[0])));
+  std::string name = (*(Nan::Utf8String(info[0])));
   int32 result = 0;
   if (SteamUserStats()->GetStat(name.c_str(), &result)) {
     info.GetReturnValue().Set(result);
@@ -81,7 +81,7 @@ NAN_METHOD(GetStatFloat) {
     THROW_BAD_ARGS("Bad arguments");
   }
 
-  std::string name = (*(v8::String::Utf8Value(info[0])));
+  std::string name = (*(Nan::Utf8String(info[0])));
   float result = 0;
   if (SteamUserStats()->GetStat(name.c_str(), &result)) {
     info.GetReturnValue().Set(result);
@@ -96,14 +96,14 @@ NAN_METHOD(SetStat) {
     THROW_BAD_ARGS("Bad arguments");
   }
 
-  std::string name = *(v8::String::Utf8Value(info[0]));
+  std::string name = *(Nan::Utf8String(info[0]));
   if (info[1]->IsInt32()) {
-    int32 value = info[1].As<v8::Number>()->Int32Value();
+    int32 value = info[1].As<v8::Number>()->Int32Value(Nan::GetCurrentContext()).FromJust();
     info.GetReturnValue().Set(SteamUserStats()->SetStat(name.c_str(), value));
     return;
   }
 
-  double value = info[1].As<v8::Number>()->NumberValue();
+  double value = Nan::To<double>(info[1]).FromJust();
   info.GetReturnValue().Set(
       SteamUserStats()->SetStat(name.c_str(), static_cast<float>(value)));
 }
@@ -129,7 +129,7 @@ NAN_METHOD(ResetAllStats) {
   if (info.Length() < 1 || (!info[0]->IsBoolean())) {
     THROW_BAD_ARGS("Bad arguments");
   }
-  bool reset_achievement = info[0]->BooleanValue();
+  bool reset_achievement = Nan::To<bool>(info[0]).FromJust();
   info.GetReturnValue().Set(SteamUserStats()->ResetAllStats(reset_achievement));
 }
 

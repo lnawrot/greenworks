@@ -20,12 +20,12 @@ NAN_METHOD(GetDLCCount) {
 
 NAN_METHOD(GetDLCDataByIndex) {
   Nan::HandleScope scope;
-  
+
   if (info.Length() < 1 || !info[0]->IsInt32()) {
     THROW_BAD_ARGS("Bad arguments; expected: index [int32]");
   }
-  
-  int32 index = info[0]->Int32Value();
+
+  int32 index = info[0]->Int32Value(Nan::GetCurrentContext()).FromJust();
   AppId_t app_id;
   bool available;
   char name[128];
@@ -48,7 +48,7 @@ NAN_METHOD(IsDLCInstalled) {
   if (info.Length() < 1 || !info[0]->IsUint32()) {
     THROW_BAD_ARGS("Bad arguments");
   }
-  auto dlc_app_id = static_cast<AppId_t>(info[0]->Uint32Value());
+  auto dlc_app_id = static_cast<AppId_t>(info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
   info.GetReturnValue().Set(SteamApps()->BIsDlcInstalled(dlc_app_id));
 }
 
@@ -57,7 +57,7 @@ NAN_METHOD(InstallDLC) {
   if (info.Length() < 1 || !info[0]->IsUint32()) {
     THROW_BAD_ARGS("Bad arguments");
   }
-  auto dlc_app_id = static_cast<AppId_t>(info[0]->Uint32Value());
+  auto dlc_app_id = static_cast<AppId_t>(info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
   SteamApps()->InstallDLC(dlc_app_id);
   info.GetReturnValue().Set(Nan::Undefined());
 }
@@ -67,7 +67,7 @@ NAN_METHOD(UninstallDLC) {
   if (info.Length() < 1 || !info[0]->IsUint32()) {
     THROW_BAD_ARGS("Bad arguments");
   }
-  auto dlc_app_id = static_cast<AppId_t>(info[0]->Uint32Value());
+  auto dlc_app_id = static_cast<AppId_t>(info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
   SteamApps()->UninstallDLC(dlc_app_id);
   info.GetReturnValue().Set(Nan::Undefined());
 }
