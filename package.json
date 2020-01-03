@@ -11,13 +11,16 @@
   "scripts": {
     "install": "echo 'noop'",
     "cpplint": "python ./deps/cpplint/cpplint.py --extensions=h,cc src/* src/api/*",
-    "compdb": "node-gyp configure -- -f ninja && ninja -C build/Release -t compdb cxx > compile_commands.json"
+    "compdb": "node-gyp configure -- -f ninja && ninja -C build/Release -t compdb cxx > compile_commands.json",
+    "configure": "node-gyp configure",
+    "build": "node-gyp build"
   },
   "dependencies": {
     "nan": "^2.14.0"
   },
   "devDependencies": {
-    "mocha": "5.2.0"
+    "mocha": "5.2.0",
+    "node-gyp": "^5.0.7"
   },
   "gypfile": true,
   "main": "greenworks.js"
